@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { createAccount } from "@/lib/actions/user.actions"
+import { createAccount, signInUser } from "@/lib/actions/user.actions"
 import  OTPModal  from "../components/OTPModal"
 
 
@@ -57,7 +57,8 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
   try {
     
-    const user = await createAccount({fullName:values.fullName || "",email:values.email});
+    //if(type==sign-up) then create new account otherwise type == sign-in which means signInUser 
+    const user = (type==="sign-up")?await createAccount({fullName:values.fullName || "",email:values.email}):(await  signInUser({email:values.email}));
     setAccountId(user.accountId);
     // console.log("USER",user);
 

@@ -15,11 +15,22 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import FileUploader from "./FileUploader"
 import { Button } from "./ui/button"
+import { usePathname } from "next/navigation"
+import { signOutUser } from "@/lib/actions/user.actions"
 
+interface Props {
+  $id:string;
+  accountId:string;
+  fullName:string;
+  avatar:string;
+  email:string;
+}
 
-const MobNavigation = () => {
+const MobNavigation = ({$id:ownerId,accountId,fullName,avatar,email}:Props) => {
 
   const [open,setOpen]=useState(false);
+  const pathname=usePathname();
+  
 
   return (
     <header className="mobile-header">
@@ -28,6 +39,7 @@ src="/assets/icons/logo-full-brand.svg"
 alt="logo"
 width={120}
 height={52}
+className="h-auto"
 />
 
 <Sheet open={open} onOpenChange={setOpen}>
@@ -53,8 +65,8 @@ height={52}
                 />
 
 <div className="sm:hidden lg:block">
-                <p className="subtitle-2 capitalize">fullName</p>
-                <p className="caption">email</p>
+                <p className="subtitle-2 capitalize">{fullName}</p>
+                <p className="caption">{email}</p>
               </div>
         </div>
         <Separator className="mb-4 bg-light-200/20"/>
@@ -64,15 +76,15 @@ height={52}
         <ul className="mobile-nav-list">
           {navItems.map(({url,name,icon})=>(
             <Link href={url} key={name} className="lg:w-full">
-                <li className={cn("mobile-nav-item")}>
+                <li className={cn("mobile-nav-item ",pathname===url && "shad-active")}>
                   <Image
                   src={icon}
                   alt={name}
                   width={24}
                   height={24}
-                  className={cn("nav-icon")}
+                  className={cn("nav-icon ",pathname===url && "nav-icon-active")}
                   />
-                  <p>name</p>
+                  <p>{name}</p>
                 </li>
             </Link>
           ))}
@@ -82,11 +94,11 @@ height={52}
           <Separator className="my-5 bg-light-200/20"/>
 
           <div className="flex flex-col justify-between gap-5 pb-5">
-            <FileUploader/>
+            <FileUploader ownerId={ownerId} accountId={accountId}/>
             <Button
             type="submit"
             className="mobile-sign-out-button"
-            onClick={()=>{}}
+            onClick={async ()=>{await signOutUser()}}
             >
               <Image
               src="/assets/icons/logout.svg"

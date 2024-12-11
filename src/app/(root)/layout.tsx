@@ -2,7 +2,8 @@ import Header from "@/components/Header";
 import MobNavigation from "@/components/MobNavigation";
 import Sidebar from "@/components/Sidebar";
 import { getCurrentUser } from "@/lib/actions/user.actions";
-
+import { Toaster } from "@/components/ui/toaster"
+import { redirect } from "next/navigation";
 
 export default async function RootLayout({
   children,
@@ -10,23 +11,25 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const getUser= await getCurrentUser();
-  console.log(getUser)
-
+  const currentUser= await getCurrentUser();
+  // console.log(currentUser)
+  if(!currentUser) return redirect("/sign-in");
   return (
    <main className="flex h-screen">
-    <Sidebar/>
+    
+    <Sidebar {...currentUser}/>
 
     <section className="flex h-full flex-1 flex-col">
-        <MobNavigation/>
+        <MobNavigation {...currentUser}/>
 
-        <Header/>
+        <Header userId={currentUser.$id} accountId={currentUser.accountId}/>
 
         <div className="main-content">
         {children}
         </div>
     </section>
-    
+
+    <Toaster/>
    </main>
   );
 }

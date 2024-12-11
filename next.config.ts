@@ -1,14 +1,28 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+
   /* config options here */
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "100MB",
+    },
+  },
+  
+  eslint: {
+
+    ignoreDuringBuilds: true,
+
+  },
   images:{
     remotePatterns:[
       {
         protocol:"https",
         hostname:"png.pngtree.com",
-        port:"",
-        pathname:"/png-vector/20210604/ourmid/pngtree-gray-avatar-placeholder-png-image_3416697.jpg"
+      },
+      {
+        protocol:"https",
+        hostname:"cloud.appwrite.io",
       }
     ]
   }

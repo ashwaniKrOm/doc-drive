@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* "eslint": "^8",
+"eslint-config-next": "15.0.3",
+"eslint-config-prettier": "^9.1.0",
+"eslint-config-standard": "^17.1.0",
+"eslint-plugin-tailwindcss": "^3.17.5", */
+
 @layer base {
   * {
     @apply scroll-smooth;
@@ -111,7 +118,7 @@
     @apply text-[16px] leading-[24px] font-medium;
   }
   .subtitle-2 {
-    @apply text-[14px] leading-[20px] font-semibold;
+    @apply text-[14px] leading-[20px] font-semibold ;
   }
   .body-1 {
     @apply text-[16px] leading-[24px] font-normal;
@@ -228,10 +235,10 @@
     @apply h-full rounded-[20px] bg-white p-5 xl:p-8 !important;
   }
   .recent-file-details {
-    @apply flex w-full flex-col xl:flex-row xl:justify-between !important;
+    @apply flex w-full justify-between  xl:flex-row xl:justify-between !important;
   }
   .recent-file-name {
-    @apply subtitle-2 line-clamp-1 w-full text-light-100 sm:max-w-[200px] lg:max-w-[250px] !important;
+    @apply subtitle-2 line-clamp-1 sm:w-48 text-light-100 sm:max-w-[200px] lg:max-w-[250px] w-full !important;
   }
   .recent-file-date {
     @apply body-2 text-light-100/80 !important;
@@ -445,7 +452,7 @@
 
   /* Thumbnail */
   .thumbnail {
-    @apply flex-center size-[50px] min-w-[50px] overflow-hidden rounded-full bg-brand/10;
+    @apply flex-center size-[50px] min-w-[50px]  min-h-[50px] overflow-hidden rounded-full bg-brand/10;
   }
   .thumbnail-image {
     @apply size-full object-cover object-center !important;

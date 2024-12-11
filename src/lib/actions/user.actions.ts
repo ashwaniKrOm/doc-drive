@@ -4,6 +4,8 @@ import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
 
 // Create Account flow:---
 
@@ -14,6 +16,8 @@ import { cookies } from "next/headers";
 // 5. craete a new user document if the user is a new user 
 // 6. return the user's accountId that will be used to complete login 
 // 7. verify otp and authenticate to login
+
+
 
 
 
@@ -121,7 +125,15 @@ export const verifySecret = async ({accountId,password}:{
 
 export const getCurrentUser = async () =>{
   try {
-    const {databases,account}=await createSessionClient();
+
+    const sessionClient= await createSessionClient();
+
+     // If sessionClient is null, return null indicating no user is logged in
+     if (!sessionClient) {
+      return null;
+    }
+
+    const {databases,account}=sessionClient;
     const result = await account.get();
     const user= await databases.listDocuments(
       appwriteConfig.databaseId,
@@ -129,9 +141,50 @@ export const getCurrentUser = async () =>{
       [Query.equal("accountId",result.$id)],
     )
 
-    if(user.total<=0) return null;
-    return JSON.stringify(user.documents[0]);
+    if (!user || user.total <= 0) {
+      return null; // Indicate user is not logged in
+    }
+
+   
+    return JSON.parse(JSON.stringify(user.documents[0]));
   } catch (error) {
     handleError(error,"Error in getting user details");
+  }
+}
+
+export const signOutUser = async () =>{
+
+  const sessionClient=await createSessionClient();
+   // If sessionClient is null, return null indicating no user is logged in
+   if (!sessionClient) {
+    return null;
+  }
+
+  const {account}=sessionClient;
+
+  try {
+    //delete current user
+    await account.deleteSession('current');
+
+    //delete current user cookies
+    ((await cookies()).delete("appwrite-session"));
+  } catch (error) {
+    handleError(error,"Error in signOutUser")
+  }finally{
+    redirect("/sign-in")
+  }
+}
+
+export const signInUser = async ({email}:{email:string}) =>{
+  const existUser=await getUserByEmail(email);
+  try {
+    if(existUser){
+      await sendEmailOTP({email});
+      return JSON.parse(JSON.stringify({accountId:existUser.accountId}))
+    }
+    
+    return JSON.parse(JSON.stringify({accountId:null,error:"user not exists"}));
+  } catch (error) {
+    handleError(error,"Error in signInUser");
   }
 }
